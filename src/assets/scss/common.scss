@@ -1,0 +1,28 @@
+//宽高
+@mixin wh($width,$height){
+  width: $width;
+  height: $height;
+}
+
+@mixin trbl($top,$right,$bottom,$left){
+  top: $top;
+  right:$right;
+  bottom: $bottom;
+  left: $left;
+}
+
+@mixin flex_layout($flex-direction,$flex-wrap,$justify-content,$align-items){
+  display: flex;
+  flex-direction: $flex-direction;
+  flex-wrap: $flex-wrap;
+  justify-content: $justify-content;
+  align-items: $align-items;
+}
+
+@mixin grid_layout($grid-template-columns,$grid-template-rows,$grid-gap,$grid-auto-flow){
+  display: grid;
+  grid-template-columns: $grid-template-columns;
+  grid-template-rows: $grid-template-rows;
+  grid-gap: $grid-gap;
+  grid-auto-flow: $grid-auto-flow;
+}
