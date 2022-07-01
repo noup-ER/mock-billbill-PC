@@ -94,7 +94,6 @@ export default {
   padding: 0 64px;
   max-width: 2078px;
   color:$color6;
-  border: 1px solid black;
 
   .channelIcons{
     margin-right: 8px;

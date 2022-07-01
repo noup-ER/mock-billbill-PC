@@ -41,11 +41,12 @@
                 </li>
               </ul>
               <ul class="l1_list l1_list4">
-                <li>你好</li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
+                <li class="li_item" v-for="item in homePageList4">
+                  <svg class="li_item_icon">
+                    <use :href="`#homepage_${item.id}`"></use>
+                  </svg>
+                  <span>{{item.name}}</span>
+                </li>
               </ul>
             </div>
           </div>
@@ -91,8 +92,53 @@
           </div>
         </transition>
       </li>
-      <li class="l4_item">
+      <li class="l4_item" @mouseenter="l4_wrapper_show = true" @mouseleave="l4_wrapper_show = false">
         <span>游戏中心</span>
+        <transition name="li_wrapper_an">
+          <div class="l4_wrapper" v-show="l4_wrapper_show">
+            <div class="l4_container">
+              <div class="game">
+                <div class="game_left">
+                  <div class="game_left_banner">
+                    <div class="game_left_banner_img">
+                      <picture>
+                        <img :src="require('@/assets/png/fate.png').default">
+                      </picture>
+                      <div class="game-left-banner-title">命运-冠位指定（Fate/GO）</div>
+                    </div>
+                  </div>
+                  <div class="game_left_panel">
+                    <div class="game_left_panel_item">
+                      <div class="game_left_panel_item_img">
+                        <picture>
+                          <img :src="require('@/assets/png/bilanhangxian.png').default">
+                        </picture>
+                      </div>
+                      <div class="game_left_panel_item_title">碧蓝航线</div>
+                    </div>
+                    <div class="game_left_panel_item">
+                      <div class="game_left_panel_item_img">
+                        <picture>
+                          <img :src="require('@/assets/png/kantebo.png').default">
+                        </picture>
+                      </div>
+                      <div class="game_left_panel_item_title">坎特伯雷公主与骑士唤醒冠军之剑的奇幻冒险</div>
+                    </div>
+                    <div class="game_left_panel_item">
+                      <div class="game_left_panel_item_img">
+                        <picture>
+                          <img :src="require('@/assets/png/baoliemonv.png').default">
+                        </picture>
+                      </div>
+                      <div class="game_left_panel_item_title">爆裂魔女</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="game_right"></div>
+              </div>
+            </div>
+          </div>
+        </transition>
       </li>
       <li class="l5_item">
         <span>会员购</span>
@@ -310,15 +356,43 @@ export default {
         name:"公开课"
       },
     ];
+    const homePageList4 = [
+      {
+        id:"read",
+        name:"专栏"
+      },
+      {
+        id:"live",
+        name:"直播"
+      },
+      {
+        id:"activity",
+        name:"活动"
+      },
+      {
+        id:"zhishi",
+        name:"课堂"
+      },
+      {
+        id:"blackroom",
+        name:"社区中心"
+      },
+      {
+        id:"musicplus",
+        name:"新歌热榜"
+      }
+    ];
 
     const state = reactive({
       l1_wrapper_show:false,
-      l3_wrapper_show:false
+      l3_wrapper_show:false,
+      l4_wrapper_show:false
     })
     return {
       homePageList1,
       homePageList2,
       homePageList3,
+      homePageList4,
       ...toRefs(state)
     }
   }
@@ -543,7 +617,97 @@ export default {
     }
 
     .l4_item{
+      position: relative;
       @extend .common_li;
+      .l4_wrapper{
+        position: absolute;
+        padding-top: 8px;
+        margin-left: -100px;
+        top: 100%;
+        left: 0;
+        cursor: default;
+
+        .l4_container{
+          position: relative;
+          background-color: white;
+          box-shadow: 0 0 30px rgb(0 0 0 / 10%);
+          border-radius: 8px;
+
+          .game{
+            @include wh(424px,295px);
+            @include flex_layout(row,nowrap,initial,initial);
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+
+            .game_left{
+              @include wh(250px,auto);
+              padding-right: 20px;
+              border-right: 0.5px solid $color1;
+
+              .game_left_banner{
+                position: relative;
+                .game_left_banner_img{
+                  @include wh(230px,129px);
+                  border-radius: 8px;
+                  overflow: hidden;
+                  cursor: pointer;
+                  picture{
+                    display: inline-block;
+                    @include wh(100%,100%);
+                    vertical-align: middle;
+                    line-height: 1;
+                    img{
+                      @include wh(100%,100%);
+                    }
+                  }
+                }
+                .game-left-banner-title{
+                  position: absolute;
+                  bottom: 8px;
+                  left: 10px;
+                  font-size: 12px;
+                  line-height: 16px;
+                  color:white;
+                }
+              }
+
+              .game_left_panel{
+                margin-top: 16px;
+                @include flex_layout(row,nowrap,space-between,initial);
+
+                .game_left_panel_item{
+                  @include wh(66px,auto);
+                  cursor: pointer;
+                }
+                .game_left_panel_item_img{
+                  @include wh(66px,66px);
+                  border-radius: 8px;
+                  overflow: hidden;
+                  img{
+                    @include wh(100%,100%);
+                  }
+                }
+                .game_left_panel_item_title{
+                  margin-top: 8px;
+                  font-size: 13px;
+                  line-height: 17px;
+                  display: -webkit-box;
+                  overflow: hidden;
+                  -webkit-box-orient: vertical;
+                  text-overflow: ellipsis;
+                  word-break: break-all;
+                  line-break: anywhere;
+                  -webkit-line-clamp: 2;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .l4_item:hover{
+      @extend .jumpHover;
     }
 
     .l5_item{

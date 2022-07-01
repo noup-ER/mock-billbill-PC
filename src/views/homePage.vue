@@ -88,6 +88,7 @@ export default {
       position: absolute;
       @include trbl(0,0,0,0);
       @include flex_layout(row,nowrap,center,center);
+      overflow: hidden;
 
       .bannerVideo{
         @include wh(auto,155px);
