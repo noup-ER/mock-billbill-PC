@@ -14,6 +14,7 @@
       </div>
     </div>
     <myHeader></myHeader>
+    <content></content>
     <div style="width:100%;height: 1000px;background-color: darkgrey"></div>
   </div>
 </template>
@@ -21,13 +22,15 @@
 <script>
 import navigate from "@/components/homePage/navigate";
 import myHeader from "@/components/homePage/header";
+import content from "@/components/homePage/content";
 
 import {ref,reactive,toRefs,toRef} from "vue";
 export default {
   name: "homePage",
   components:{
     navigate,
-    myHeader
+    myHeader,
+    content
   },
   setup(){
     let startX = null,unitMove = 30 / document.body.offsetWidth;
@@ -48,7 +51,7 @@ export default {
       }else{
         state.banner2_opacity = 1;
         state.banner2_translateX = -(e.offsetX - startX)*unitMove + "px";
-        state.banner1_translateX = -this.state.banner2_translateX + "px";
+        state.banner1_translateX = - state.banner2_translateX + "px";
       }
     }
 

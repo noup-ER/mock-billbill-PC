@@ -1,20 +1,23 @@
 <template>
-  <div class="navigate">
+  <div class="navigate" @mouseover="handle_navigate_mouseover" @mouseout="handle_navigate_mouseout" :class="{'absolute_navigate':navigate_top_show,'fixed_navigate':!navigate_top_show}">
     <ul class="leftContainer">
 <!--      首页-->
-      <li class="l1_item" @mouseenter="l1_wrapper_show = true" @mouseleave="l1_wrapper_show = false">
-        <svg class="billbillIcon" width="140" height="64">
+      <li class="l1_item" id="l1_item" @mouseenter="handle_l1_item_mouseenter" @mouseleave="handle_l1_item_mouseleave">
+        <svg class="absolute_billbillIcon" v-show="navigate_top_show" width="18" height="18">
+          <use href="#absolute_billbillIcon"></use>
+        </svg>
+        <svg class="billbillIcon" v-show="!navigate_top_show" width="140" height="64">
           <use href="#billbillIcon"></use>
         </svg>
         <div class="l1_title">
           <span>首页</span>
-          <svg width="10" height="10" class="arrow_to_bottom" :class="{'arrow_to_up':l1_wrapper_show}">
+          <svg width="10" height="10" class="arrow_to_bottom" v-show="!navigate_top_show" :class="{'arrow_to_up':l1_wrapper_show}">
             <use href="#arrow_to_bottom"></use>
           </svg>
         </div>
 <!--        首页菜单栏-->
         <transition name="li_wrapper_an">
-          <div class="l1_wrapper" v-show="l1_wrapper_show">
+          <div class="l1_wrapper" v-show="navigate_wrapper_show === 'l1'">
             <div class="l1_list_container">
               <ul class="l1_list l1_list1">
                 <li class="li_item" v-for="item in homePageList1">
@@ -57,10 +60,10 @@
         <span>番剧</span>
       </li>
 <!--      直播-->
-      <li class="l3_item" @mouseenter="l3_wrapper_show = true" @mouseleave="l3_wrapper_show = false">
+      <li class="l3_item" @mouseenter="handle_l3_item_mouseenter" @mouseleave="handle_l3_item_mouseleave">
         <span>直播</span>
         <transition name="li_wrapper_an">
-          <div class="l3_wrapper" v-show="l3_wrapper_show">
+          <div class="l3_wrapper" v-show="navigate_wrapper_show === 'l3'">
             <div class="l3_container">
               <div class="liveLeft">
                 <div class="liveLeftTitle">热门直播：</div>
@@ -92,10 +95,10 @@
           </div>
         </transition>
       </li>
-      <li class="l4_item" @mouseenter="l4_wrapper_show = true" @mouseleave="l4_wrapper_show = false">
+      <li class="l4_item" @mouseenter="handle_l4_item_mouseenter" @mouseleave="handle_l4_item_mouseleave">
         <span>游戏中心</span>
         <transition name="li_wrapper_an">
-          <div class="l4_wrapper" v-show="l4_wrapper_show">
+          <div class="l4_wrapper" v-show="navigate_wrapper_show === 'l4'">
             <div class="l4_container">
               <div class="game">
                 <div class="game_left">
@@ -134,7 +137,21 @@
                     </div>
                   </div>
                 </div>
-                <div class="game_right"></div>
+                <div class="game_right">
+                  <div class="game_right_title">
+                    新游预告
+                  </div>
+                  <div class="game_right_list">
+                    <div class="game_right_list_item" v-for="item in ['长安百万贯','宝石研物语:伊恩之石','空之要塞:启航','奥比岛:梦想过度','流浪方舟','暗区突围','英雄联盟电竞经理']">
+                      {{item}}
+                    </div>
+                    <div class="game_right_list_img">
+                      <picture>
+                        <img :src="require('@/assets/png/kongzhiyaosai.png').default" alt>
+                      </picture>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -149,12 +166,18 @@
       <li class="l7_item">
         <span>赛事</span>
       </li>
-      <li class="l8_item">
+      <li class="l8_item" v-show="!navigate_top_show">
         <div class="l8_container">
           <p>周年庆</p>
           <img class="l8_img" :src="require('@/assets/png/banner.png').default" alt="横幅">
           <p>周年庆</p>
         </div>
+      </li>
+      <li class="l9_item" v-show="navigate_top_show">
+        <svg class="download_client_icon" width="16" height="16">
+          <use href="#download_client_icon"></use>
+        </svg>
+        <span>下载客户端</span>
       </li>
     </ul>
     <ul class="centerContainer">
@@ -233,12 +256,14 @@
 </template>
 
 <script>
-import {reactive,toRefs} from "vue";
+import {reactive,toRefs,getCurrentInstance} from "vue";
+import {throttle} from "lodash";
 
 export default {
   name: "navigate",
   setup(){
-    const homePageList1 = [
+    const homePageList = {}
+    homePageList.homePageList1 = [
       {
         id:"anime",
         name:"番剧"
@@ -280,7 +305,7 @@ export default {
         name:"音乐"
       }
     ];
-    const homePageList2 = [
+    homePageList.homePageList2 = [
       {
         id:"dance",
         name:"舞蹈"
@@ -322,7 +347,7 @@ export default {
         name:"时尚"
       }
     ];
-    const homePageList3 = [
+    homePageList.homePageList3 = [
       {
         id:"sports",
         name:"运动"
@@ -356,7 +381,7 @@ export default {
         name:"公开课"
       },
     ];
-    const homePageList4 = [
+    homePageList.homePageList4 = [
       {
         id:"read",
         name:"专栏"
@@ -383,38 +408,80 @@ export default {
       }
     ];
 
+
     const state = reactive({
       l1_wrapper_show:false,
       l3_wrapper_show:false,
-      l4_wrapper_show:false
+      l4_wrapper_show:false,
+      navigate_wrapper_show:null,
+      navigate_top_show:true
     })
+
+    const handle_l1_item_mouseenter = throttle((e)=>{
+      state.navigate_wrapper_show = "l1";
+    },500)
+    const handle_l1_item_mouseleave = (e)=>{
+      state.navigate_wrapper_show = null;
+    }
+
+    const handle_l3_item_mouseenter = throttle((e)=>{
+      state.navigate_wrapper_show = "l3";
+    },500)
+    const handle_l3_item_mouseleave = (e)=>{
+      state.navigate_wrapper_show = null;
+    }
+
+    const handle_l4_item_mouseenter = throttle((e)=>{
+      state.navigate_wrapper_show = "l4";
+    },500)
+    const handle_l4_item_mouseleave = (e)=>{
+      state.navigate_wrapper_show = null;
+    }
+
+
+
     return {
-      homePageList1,
-      homePageList2,
-      homePageList3,
-      homePageList4,
-      ...toRefs(state)
+      ...toRefs(state),
+      ...homePageList,
+      handle_l1_item_mouseenter,
+      handle_l1_item_mouseleave,
+      handle_l3_item_mouseenter,
+      handle_l3_item_mouseleave,
+      handle_l4_item_mouseenter,
+      handle_l4_item_mouseleave
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+.absolute_navigate{
+  position: absolute;
+  color: white;
+  .absolute_billbillIcon{
+    margin-right: 6px;
+  }
+}
+.fixed_navigate{
+  position: fixed;
+  background-color: white;
+  box-shadow: 0 2px 4px #00000014;
+}
+
 .navigate{
   position: fixed;
   @include flex_layout(row,nowrap,space-between,center);
   @include wh(100%,64px);
   min-width: 1100px;
   padding: 0 24px;
-  box-shadow: 0 2px 4px #00000014;
   z-index: 1001;
-  background-color: white;
+
 
   .leftContainer{
     @include flex_layout(row,nowrap,space-around,center);
     flex-shrink: 0;
     margin-right: 5px;
-    color: $color6;
+    //color: $color6;
 
     .common_li{
       @include wh(auto,64px);
@@ -702,6 +769,44 @@ export default {
                 }
               }
             }
+            .game_right{
+              padding: 0 20px;
+              .game_right_title{
+                font-size: 20px;
+                line-height: 28px;
+                margin: 0 0 10px 8px;
+                font-weight: 500;
+              }
+              .game_right_list{
+                position: relative;
+                .game_right_list_item{
+                  width: 120px;
+                  height: 29px;
+                  cursor: pointer;
+                  font-size: 13px;
+                  line-height: 29px;
+                  color: $color3;
+                  padding: 0 8px;
+                  margin-bottom: 2px;
+                  display: -webkit-box;
+                  overflow: hidden;
+                  -webkit-box-orient: vertical;
+                  text-overflow: ellipsis;
+                  word-break: break-all;
+                  line-break: anywhere;
+                  -webkit-line-clamp: 1;
+                  transition: background .2s linear;
+                }
+              }
+              .game_right_list_img{
+                position: absolute;
+                top: 6px;
+                right: -195px;
+                @include wh(200px,200px);
+                border-radius: 8px;
+                overflow: hidden;
+              }
+            }
           }
         }
       }
@@ -743,6 +848,13 @@ export default {
           @include wh(54px,36px);
           display: block;
         }
+      }
+    }
+
+    .l9_item{
+      @extend .common_li;
+      .download_client_icon{
+        margin-right: 5px;
       }
     }
   }
