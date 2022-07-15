@@ -211,6 +211,12 @@ export default {
           margin-right: 4px;
         }
       }
+
+      //@media (max-width: 1099.9px) {
+      //  svg {
+      //    display: none;
+      //  }
+      //}
     }
   }
 

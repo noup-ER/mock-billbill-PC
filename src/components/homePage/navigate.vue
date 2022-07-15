@@ -1,23 +1,25 @@
 <template>
-  <div class="navigate" @mouseover="handle_navigate_mouseover" @mouseout="handle_navigate_mouseout" :class="{'absolute_navigate':navigate_top_show,'fixed_navigate':!navigate_top_show}">
+  <div class="navigate" :class="{'absolute_navigate':navigate_top_show,'fixed_navigate':!navigate_top_show}">
     <ul class="leftContainer">
 <!--      首页-->
-      <li class="l1_item" id="l1_item" @mouseenter="handle_l1_item_mouseenter" @mouseleave="handle_l1_item_mouseleave">
-        <svg class="absolute_billbillIcon" v-show="navigate_top_show" width="18" height="18">
-          <use href="#absolute_billbillIcon"></use>
-        </svg>
-        <svg class="billbillIcon" v-show="!navigate_top_show" width="140" height="64">
-          <use href="#billbillIcon"></use>
-        </svg>
-        <div class="l1_title">
-          <span>首页</span>
-          <svg width="10" height="10" class="arrow_to_bottom" v-show="!navigate_top_show" :class="{'arrow_to_up':l1_wrapper_show}">
-            <use href="#arrow_to_bottom"></use>
+      <li class="l1_item" id="l1_item" @mouseleave="l1_wrapper_show = false">
+        <div class="l1_item_main_container" @mouseenter="l1_wrapper_show = true">
+          <svg class="absolute_billbillIcon" v-show="navigate_top_show" width="18" height="18">
+            <use href="#absolute_billbillIcon"></use>
           </svg>
+          <svg class="billbillIcon" v-show="!navigate_top_show" width="140" height="64">
+            <use href="#billbillIcon"></use>
+          </svg>
+          <div class="l1_title">
+            <span>首页</span>
+            <svg width="10" height="10" class="arrow_to_bottom" v-show="!navigate_top_show" :class="{'arrow_to_up':l1_wrapper_show}">
+              <use href="#arrow_to_bottom"></use>
+            </svg>
+          </div>
         </div>
 <!--        首页菜单栏-->
         <transition name="li_wrapper_an">
-          <div class="l1_wrapper" v-show="navigate_wrapper_show === 'l1'">
+          <div class="l1_wrapper" v-show="l1_wrapper_show">
             <div class="l1_list_container">
               <ul class="l1_list l1_list1">
                 <li class="li_item" v-for="item in homePageList1">
@@ -417,38 +419,38 @@ export default {
       navigate_top_show:true
     })
 
-    const handle_l1_item_mouseenter = throttle((e)=>{
-      state.navigate_wrapper_show = "l1";
-    },500)
-    const handle_l1_item_mouseleave = (e)=>{
-      state.navigate_wrapper_show = null;
-    }
-
-    const handle_l3_item_mouseenter = throttle((e)=>{
-      state.navigate_wrapper_show = "l3";
-    },500)
-    const handle_l3_item_mouseleave = (e)=>{
-      state.navigate_wrapper_show = null;
-    }
-
-    const handle_l4_item_mouseenter = throttle((e)=>{
-      state.navigate_wrapper_show = "l4";
-    },500)
-    const handle_l4_item_mouseleave = (e)=>{
-      state.navigate_wrapper_show = null;
-    }
+    // const handle_l1_item_mouseenter = throttle((e)=>{
+    //   state.navigate_wrapper_show = "l1";
+    // },500)
+    // const handle_l1_item_mouseleave = (e)=>{
+    //   state.navigate_wrapper_show = null;
+    // }
+    //
+    // const handle_l3_item_mouseenter = throttle((e)=>{
+    //   state.navigate_wrapper_show = "l3";
+    // },500)
+    // const handle_l3_item_mouseleave = (e)=>{
+    //   state.navigate_wrapper_show = null;
+    // }
+    //
+    // const handle_l4_item_mouseenter = throttle((e)=>{
+    //   state.navigate_wrapper_show = "l4";
+    // },500)
+    // const handle_l4_item_mouseleave = (e)=>{
+    //   state.navigate_wrapper_show = null;
+    // }
 
 
 
     return {
       ...toRefs(state),
       ...homePageList,
-      handle_l1_item_mouseenter,
-      handle_l1_item_mouseleave,
-      handle_l3_item_mouseenter,
-      handle_l3_item_mouseleave,
-      handle_l4_item_mouseenter,
-      handle_l4_item_mouseleave
+      // handle_l1_item_mouseenter,
+      // handle_l1_item_mouseleave,
+      // handle_l3_item_mouseenter,
+      // handle_l3_item_mouseleave,
+      // handle_l4_item_mouseenter,
+      // handle_l4_item_mouseleave
     }
   }
 }
@@ -510,28 +512,28 @@ export default {
     }
 
     .l1_item{
-      position: relative;
-      height: 56px;
-      @include flex_layout(row,nowrap,space-between,center);
-      @extend .common_li;
+      .l1_item_main_container{
+        @extend .common_li;
+        position: relative;
 
-      .billbillIcon{
-        @include wh(60px,64px);
-        margin-right: 25px;
-      }
-
-      .l1_title{
-        @include flex_layout(row,nowrap,center,center);
-
-        span{
-          margin-right: 5px;
+        .billbillIcon{
+          @include wh(60px,64px);
+          margin-right: 25px;
         }
-        .arrow_to_bottom{
-          @include wh(10px,10px);
-          transition: all .3s;
-        }
-        .arrow_to_up{
-          transform: rotate(180deg);
+
+        .l1_title{
+          @include flex_layout(row,nowrap,center,center);
+
+          span{
+            margin-right: 5px;
+          }
+          .arrow_to_bottom{
+            @include wh(10px,10px);
+            transition: all .3s;
+          }
+          .arrow_to_up{
+            transform: rotate(180deg);
+          }
         }
       }
 
